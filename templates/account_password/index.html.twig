@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Modifier mon mot de passe
+{% endblock %}
+
+{% block content %}
+<h1>Modifier mon mot de passe</h1>
+
+<br>
+
+<a href="{{path('app_profile')}}">Retourner à mon compte</a>
+
+<br>
+
+<hr>
+
+{{ form_start(form) }}
+{{form_row(form.firstName)}}
+{{form_row(form.lastName)}}
+{{ form_row(form.email)}}
+{{ form_row(form.oldPassword)}}
+{{ form_row(form.newPassword)}}
+{{form_row(form.confirmNewPassword)}}
+{{ form_end(form) }}
+
+<hr>
+{% endblock %}

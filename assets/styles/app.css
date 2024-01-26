@@ -89,6 +89,14 @@ body {
     letter-spacing: -.05rem;
 }
 
+footer {
+    width: 100%;
+    position: fixed;
+    background-color: rgb(168, 197, 252);
+    bottom: 0;
+    padding: 10px;
+}
+
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */

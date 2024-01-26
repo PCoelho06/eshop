@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé')]
+#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé', groups: ['register'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -45,11 +45,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
+    #[Assert\NotBlank(message: 'Vous devez confirmer votre mot de passe', groups: ['register'])]
     #[Assert\EqualTo(
     propertyPath: 'password',
     message: 'Les deux mots de passe ne sont pas identiques',
     )]
-    public $confirmPassword;
+    private ?string $confirmPassword;
+
+    private $oldPassword;
+
+    #[Assert\NotBlank(message: 'Vous devez entrer un mot de passe')]
+    #[Assert\Length(
+    min: 8,
+    minMessage: 'Votre mot de passe doit faire un minimun de 8 caractères'
+    )]
+    private $newPassword;
+    
+    /*confirmation du password*/
+    #[Assert\NotBlank(message: 'Vous devez confirmer votre nouveau mot de passe')]
+    #[Assert\EqualTo(
+    propertyPath: 'newPassword',
+    message: 'Les deux mots de passe ne sont pas identiques'
+    )]
+    private $confirmNewPassword;
 
     #[Assert\NotBlank(
         message: 'Vous devez renseigner votre prénom', 
@@ -155,6 +173,86 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of confirmPassword
+     */ 
+    public function getConfirmPassword()
+    {
+        return $this->confirmPassword;
+    }
+
+    /**
+     * Set the value of confirmPassword
+     *
+     * @return  self
+     */ 
+    public function setConfirmPassword($confirmPassword)
+    {
+        $this->confirmPassword = $confirmPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of oldPassword
+     */ 
+    public function getOldPassword()
+    {
+        return $this->oldPassword;
+    }
+
+    /**
+     * Set the value of oldPassword
+     *
+     * @return  self
+     */ 
+    public function setOldPassword($oldPassword)
+    {
+        $this->oldPassword = $oldPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of newPassword
+     */ 
+    public function getNewPassword()
+    {
+        return $this->newPassword;
+    }
+
+    /**
+     * Set the value of newPassword
+     *
+     * @return  self
+     */ 
+    public function setNewPassword($newPassword)
+    {
+        $this->newPassword = $newPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of confirmNewPassword
+     */ 
+    public function getConfirmNewPassword()
+    {
+        return $this->confirmNewPassword;
+    }
+
+    /**
+     * Set the value of confirmNewPassword
+     *
+     * @return  self
+     */ 
+    public function setConfirmNewPassword($confirmNewPassword)
+    {
+        $this->confirmNewPassword = $confirmNewPassword;
 
         return $this;
     }
