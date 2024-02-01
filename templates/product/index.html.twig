@@ -7,21 +7,36 @@
 	<h1>Nos Produits</h1>
 
 	<div class="row">
-		{% for product in products %}
-			<div class="col-md-4 mt-3">
-				<a href="{{ path('app_product_show', {'slug': product.slug}) }}">
-					<img src="/uploads/{{product.illustration}}" alt="{{product.name}}" class="img-fluid">
-					<div class="product-item text-center">
-						<h5 style="font-weight:bold">{{product.name}}</h5>
-						<div>{{product.subtitle}}</div>
-						<div style="font-weight:bold">
-							{{(product.price /100) | number_format(2)}}€
-						</div>
-						<div>Catégorie: {{product.category.name}}</div>
+		<div class="col-md-3">
+			{{ form_start(form) }} 
+			{{ form_end(form)}}
+		</div>
+		<div class="col-md-9">
+			<div class="row">
+				{% if error %}
+					<div class="alert alert-danger" role="alert">
+						<hr>
+						<h4 class="alert-heading">{{error}}</h4>
+						<hr>
 					</div>
-				</a>
+				{% endif %}
+				{% for product in products %}
+					<div class="col-md-4 mt-3">
+						<a href="{{ path('app_product_show', {'slug': product.slug}) }}">
+							<img src="/uploads/{{product.illustration}}" alt="{{product.name}}" class="img-fluid">
+							<div class="product-item text-center">
+								<h5 style="font-weight:bold">{{product.name}}</h5>
+								<div>{{product.subtitle}}</div>
+								<div style="font-weight:bold">
+									{{(product.price /100) | number_format(2)}}€
+								</div>
+								<div>Catégorie: {{product.category.name}}</div>
+							</div>
+						</a>
+					</div>
+				{% endfor %}
 			</div>
-		{% endfor %}
+		</div>
 	</div>
 
 {% endblock %}
