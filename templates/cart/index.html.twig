@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier
+{% endblock %}
+
+{% block content %}
+	<h1>Mon panier</h1>
+	<p>Retrouver l'ensemble des produits ajoutés au panier</p>
+	<hr>
+
+	{% if cart | length > 0 %}
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Produits</th>
+					<th scope="col">Noms</th>
+					<th scope="col">Quantité</th>
+					<th scope="col">Prix</th>
+					<th scope="col">Total</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set total = null %}
+				{% for product in cart %}
+					{% set total= total + product.product.price * product.quantity %}
+					<tr>
+						<th>><img src="/uploads/{{product.product.illustration}}" alt="{{product.product.name}}" style="height:100px"></th>
+
+						<td>
+							{{product.product.name}}<br>
+							<i>{{product.product.subtitle}}</i>
+						</td>
+
+						<td>
+							<a href="{{path('app_cart_decrease',{'id':product.product.id})}}" class="btn btn-primary">
+								<i class="fas fa-minus-square"></i>
+							</a>
+							{{product.quantity}}
+							<a href="{{path('app_cart_add',{'id':product.product.id})}}" class="btn btn-primary">
+								<i class="fas fa-plus-square"></i>
+							</a>
+						</td>
+						<td>
+							<b>{{(product.product.price /100) | number_format(2)}}€</b>
+						</td>
+						<td>
+							<b>{{(product.product.price * product.quantity /100) | number_format(2)}}€</b>
+						</td>
+						<td>
+							<a href="{{path('app_cart_delete',{'id':product.product.id})}}" class="btn btn-danger">
+
+								<i class="fas fa-trash-alt"></i>
+							</a>
+						</td>
+
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div class="text-end">
+			<b>
+				Nombre de produits:
+				{{cart | length}}
+			</b>
+			<b><br>
+				Total de mon panier:
+				{{total/100 | number_format(2) }}
+				€
+			</b><br>
+			<a href="" class="btn btn-success col-12">Valider mon panier</a>
+		</div>
+	{% else %}
+		<p>
+			<b>Votre panier est vide</b>
+		</p>
+
+	{% endif %}
+{% endblock %}
