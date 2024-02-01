@@ -1,20 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-Mon compte
+	Mon compte
 {% endblock %}
 
 {% block content %}
-<h1>Mon compte</h1>
-Bienvenu {{app.user.firstName}} - Vous pourrez gérer toutes vos informations personnelles dans cet espace. <br>
-{{dump(app.user)}}
-<br>
+	<h1>Mon compte</h1>
+	Bienvenu
+	{{app.user.firstName}}
+	- Vous pourrez gérer toutes vos informations personnelles dans cet espace.
+	<br>
+	{{dump(app.user)}}
+	<br>
 
-<a href="{{path('app_account_password')}}">Modifier mon mot de passe</a>
+	<a href="{{path('app_account_password')}}">Modifier mon mot de passe</a>
 
-<br>
-- Ajouter mes adresses
-<br>
-- Mes commandes
-<br>
+	<br>
+	-
+	<a href="{{path('app_account_address')}}">Gérer mes adresses</a>
+
+
+	<br>
+	- Mes commandes
+	<br>
 {% endblock %}

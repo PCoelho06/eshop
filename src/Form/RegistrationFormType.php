@@ -22,8 +22,6 @@ class RegistrationFormType extends AbstractType
             ->add('lastName')
             ->add('email')
             ->add('password', PasswordType::class, [
-                                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'attr' => ['autocomplete' => 'new-password'],
             ])
             ->add('confirmPassword', PasswordType::class)
