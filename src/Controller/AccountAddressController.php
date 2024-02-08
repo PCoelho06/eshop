@@ -29,10 +29,10 @@ class AccountAddressController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $address->setUser($this->getUser());
 
-            $manager->persist($address); 
+            $manager->persist($address);
             $manager->flush();
 
             $this->addFlash(
@@ -41,7 +41,6 @@ class AccountAddressController extends AbstractController
             );
 
             return $this->redirectToRoute('app_account_address');
-
         }
 
         return $this->render('account_address/add.html.twig', [
@@ -61,7 +60,7 @@ class AccountAddressController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $manager->flush();
 
             $this->addFlash(
@@ -70,11 +69,25 @@ class AccountAddressController extends AbstractController
             );
 
             return $this->redirectToRoute('app_account_address');
-
         }
 
         return $this->render('account_address/add.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route(path: '/compte/supprimer-une-adresse/{id}', name: 'app_account_address_delete')]
+    public function delete(EntityManagerInterface $manager, Address $address): Response
+    {
+        if ($address && $address->getUser() == $this->getUser()) {
+            $manager->remove($address);
+            $manager->flush();
+            $this->addFlash(
+                'success',
+                "L'adresse {$address->getName()} a bien été supprimée"
+            );
+        }
+
+        return $this->redirectToRoute('app_account_address');
     }
 }
