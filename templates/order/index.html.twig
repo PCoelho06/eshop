@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %}Valider ma commande - Ma Boutique!
+{% endblock %}
+{% block content %}
+	<h2>Je passe ma commande</h2>
+	<p>Choisissez vos préférences avant de passer votre commande</p>
+	<hr>
+	<div class="row">
+		<div class="col-md-6">
+			{% set formHTML %}
+			{{form_start(form)}}{{form_end(form)}}
+			{% endset %}
+			{{ formHTML|replace({'[br]': '<br>'})|raw }}
+		</div>
+		<div class="col-md-6">
+			<b>Recapitulatif de votre commande</b><br>
+			{% set total = null %}
+			{% for product in cart %}
+				{% set total= total + product.product.price * product.quantity %}
+				<div class="row mt-3">
+					<div class="col-2">
+						<img src="/uploads/{{product.product.illustration}}" alt="{{product.product.name}}" class="img-fluid">
+					</div>
+					<div class="col-8">
+						{{product.product.name}}<br>
+						<i>{{product.product.subtitle}}</i><br>
+						x
+						{{product.quantity}}
+					</div>
+					<div class="col-2 my-auto">
+						{{product.product.price * product.quantity /100 | number_format(2)}}
+						€
+					</div>
+				</div>
+			{% endfor %}
+			<hr>
+			<strong>Sous Total :
+				{{total/100 | number_format(2) }}
+				€<br>
+			</strong>
+
+		</div>
+	</div>
+
+{% endblock %}

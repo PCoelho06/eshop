@@ -28,8 +28,7 @@
 							</p>
 							<a href="{{ path('app_account_address_edit', {'id': address.id}) }}" class="card-link btn btn-info">Modifier</a>
 
-							<a href="{{ path('app_account_address_delete', {'id': address.id}) }}" class="card-link btn btn-danger">Supprimer</a>
-
+							<a href="{{ path('app_account_address_delete', {'id': address.id}) }}" class="card-link btn btn-danger" onclick="return confirm('Etes-vous sûr(e) de vouloir supprimer l\'adresse {{ address.name }} ?')">Supprimer</a>
 						</div>
 					</div>
 				</div>

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AddressRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,9 +37,10 @@ class Address
 
     #[ORM\Column(length: 255)]
     #[Assert\Regex(
-    pattern: '#^[0-9]{5}#', 
-    match: true, 
-    message: 'le code postal doit être au format 00000')]
+        pattern: '#^[0-9]{5}#',
+        match: true,
+        message: 'le code postal doit être au format 00000'
+    )]
     private ?string $postal = null;
 
     #[ORM\Column(length: 255)]
@@ -48,10 +51,24 @@ class Address
 
     #[ORM\Column(length: 255)]
     #[Assert\Regex(
-    pattern: '#^0[1-9]([0-9]{2}){4}#', 
-    match: true, 
-    message: 'le téléphone doit être au format 0000000000')]
+        pattern: '#^0[1-9]([0-9]{2}){4}#',
+        match: true,
+        message: 'le téléphone doit être au format 0000000000'
+    )]
     private ?string $phone = null;
+
+    #[ORM\OneToMany(mappedBy: 'delivery', targetEntity: Order::class)]
+    private Collection $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name . '[br]' . $this->address . '[br]' . $this->postal . ' - ' . $this->city;
+    }
 
     public function getId(): ?int
     {
@@ -174,6 +191,36 @@ class Address
     public function setPhone(string $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setDelivery($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getDelivery() === $this) {
+                $order->setDelivery(null);
+            }
+        }
 
         return $this;
     }

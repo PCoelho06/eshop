@@ -49,8 +49,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\NotBlank(message: 'Vous devez confirmer votre mot de passe', groups: ['register'])]
     #[Assert\EqualTo(
-    propertyPath: 'password',
-    message: 'Les deux mots de passe ne sont pas identiques',
+        propertyPath: 'password',
+        message: 'Les deux mots de passe ne sont pas identiques',
     )]
     private ?string $confirmPassword;
 
@@ -58,28 +58,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\NotBlank(message: 'Vous devez entrer un mot de passe')]
     #[Assert\Length(
-    min: 8,
-    minMessage: 'Votre mot de passe doit faire un minimun de 8 caractères'
+        min: 8,
+        minMessage: 'Votre mot de passe doit faire un minimun de 8 caractères'
     )]
     private $newPassword;
-    
+
     /*confirmation du password*/
     #[Assert\NotBlank(message: 'Vous devez confirmer votre nouveau mot de passe')]
     #[Assert\EqualTo(
-    propertyPath: 'newPassword',
-    message: 'Les deux mots de passe ne sont pas identiques'
+        propertyPath: 'newPassword',
+        message: 'Les deux mots de passe ne sont pas identiques'
     )]
     private $confirmNewPassword;
 
     #[Assert\NotBlank(
-        message: 'Vous devez renseigner votre prénom', 
+        message: 'Vous devez renseigner votre prénom',
         groups: ['register']
     )]
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
     #[Assert\NotBlank(
-        message: 'Vous devez renseigner votre nom', 
+        message: 'Vous devez renseigner votre nom',
         groups: ['register']
     )]
     #[ORM\Column(length: 255)]
@@ -88,9 +88,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Address::class)]
     private Collection $addresses;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -189,7 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of confirmPassword
-     */ 
+     */
     public function getConfirmPassword()
     {
         return $this->confirmPassword;
@@ -199,7 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Set the value of confirmPassword
      *
      * @return  self
-     */ 
+     */
     public function setConfirmPassword($confirmPassword)
     {
         $this->confirmPassword = $confirmPassword;
@@ -209,7 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of oldPassword
-     */ 
+     */
     public function getOldPassword()
     {
         return $this->oldPassword;
@@ -219,7 +223,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Set the value of oldPassword
      *
      * @return  self
-     */ 
+     */
     public function setOldPassword($oldPassword)
     {
         $this->oldPassword = $oldPassword;
@@ -229,7 +233,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of newPassword
-     */ 
+     */
     public function getNewPassword()
     {
         return $this->newPassword;
@@ -239,7 +243,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Set the value of newPassword
      *
      * @return  self
-     */ 
+     */
     public function setNewPassword($newPassword)
     {
         $this->newPassword = $newPassword;
@@ -249,7 +253,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of confirmNewPassword
-     */ 
+     */
     public function getConfirmNewPassword()
     {
         return $this->confirmNewPassword;
@@ -259,7 +263,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Set the value of confirmNewPassword
      *
      * @return  self
-     */ 
+     */
     public function setConfirmNewPassword($confirmNewPassword)
     {
         $this->confirmNewPassword = $confirmNewPassword;
@@ -295,5 +299,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function GetFullName()
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 }
