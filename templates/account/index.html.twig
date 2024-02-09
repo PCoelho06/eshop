@@ -11,6 +11,11 @@
 	- Vous pourrez gérer toutes vos informations personnelles dans cet espace.
 	<br>
 
+	{% if (is_granted("ROLE_ADMIN")) %}
+		<a href="{{ path('app_admin') }}">Accéder au backoffice</a>
+	{% endif %}
+
+
 	<a href="{{path('app_account_password')}}">Modifier mon mot de passe</a>
 
 	<br>
@@ -19,6 +24,8 @@
 
 
 	<br>
-	- Mes commandes
+	-
+	<a href="{{path('app_account_order')}}">Mes commandes</a>
+
 	<br>
 {% endblock %}

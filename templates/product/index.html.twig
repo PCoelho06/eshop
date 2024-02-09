@@ -8,7 +8,7 @@
 
 	<div class="row">
 		<div class="col-md-3">
-			{{ form_start(form) }} 
+			{{ form_start(form) }}
 			{{ form_end(form)}}
 		</div>
 		<div class="col-md-9">
@@ -30,11 +30,83 @@
 								<div style="font-weight:bold">
 									{{(product.price /100) | number_format(2)}}€
 								</div>
-								<div>Catégorie: {{product.category.name}}</div>
+								{% include "/partials/rating.html.twig" with {'rating': product.getAvgRatings} %}
+								<div>Catégorie:
+									{{product.category.name}}</div>
 							</div>
 						</a>
 					</div>
 				{% endfor %}
+				{% if pages > 1 %}
+					<nav>
+						{% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-contentend' : '') %}
+						{% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
+						<ul class="pagination{{ classAlign }}{{ classSize }}">
+							{% if previous is not null %}
+								<li class="page-item">
+									<a class="page-link" rel="prev" href="{{ path('accueil', app.request.query.all|merge({'page': previous})) }}">&laquo;&nbsp;Précédent</a>
+								</li>
+							{% else %}
+								<li class="page-item disabled">
+									<span class="page-link">&laquo;&nbsp;Précédent</span>
+								</li>
+							{% endif %}
+							{% if startPage > 1 %}
+								<li class="page-item">
+									<a class="page-link" href="{{ path('accueil', app.request.query.all|merge({'page': 1})) }}">1</a>
+								</li>
+								{% if startPage == 3 %}
+									<li class="page-item">
+										<a class="page-link" href="{{ path('accueil', app.request.query.all|merge({'page': 2})) }}">2</a>
+									</li>
+								{% elseif startPage != 2 %}
+									<li class="page-item disabled">
+										<span class="page-link">&hellip;</span>
+									</li>
+								{% endif %}
+							{% endif %}
+							{% for page in pagesInRange %}
+								{% if page != current %}
+									<li class="page-item">
+										<a class="page-link" href="{{ path('accueil', app.request.query.all|merge({'page': page})) }}">{{ page }}</a>
+									</li>
+								{% else %}
+									<li class="page-item active">
+										<span class="page-link">{{ page }}</span>
+									</li>
+								{% endif %}
+							{% endfor %}
+							{% if pages > endPage %}
+								{% if pages > (endPage + 1) %}
+									{% if pages > (endPage + 2) %}
+										<li class="page-item disabled">
+											<span class="page-link">&hellip;</span>
+										</li>
+									{% else %}
+										<li class="page-item">
+											<a class="page-link" href="{{ path('accueil', app.request.query.all|merge({'page': (pages - 1)})) }}">{{ pages
+-1 }}</a>
+										</li>
+									{% endif %}
+								{% endif %}
+								<li class="page-item">
+									<a class="page-link" href="{{ path('accueil', app.request.query.all|merge({'page': pages})) }}">{{ pages }}</a>
+								</li>
+							{% endif %}
+							{% if next is not null %}
+								<li class="page-item">
+									<a class="page-link" rel="next" href="{{ path('accueil', app.request.query.all|merge({'page': next})) }}">Suivant&nbsp;&raquo;</a>
+								</li>
+							{% else %}
+								<li class="page-item disabled">
+									<span class="page-link">Suivant&nbsp;&raquo;</span>
+								</li>
+							{% endif %}
+						</ul>
+					</nav>
+				{% endif %}
+
+
 			</div>
 		</div>
 	</div>

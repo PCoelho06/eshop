@@ -31,8 +31,10 @@ class Product
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Veuillez engistrer une image svp')]
     #[Assert\Regex(
-    pattern: '#\.(jpg|png|gif)$#', 
-    match: true, message: 'Url doit se terminer par .jpg ou .png ou .gif')]
+        pattern: '#\.(jpg|png|gif)$#',
+        match: true,
+        message: 'Url doit se terminer par .jpg ou .png ou .gif'
+    )]
     private ?string $illustration = null;
 
     #[ORM\Column(length: 255)]
@@ -50,9 +52,13 @@ class Product
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderDetails::class)]
     private Collection $orderDetails;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Comment::class)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->orderDetails = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,5 +186,72 @@ class Product
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getProduct() === $this) {
+                $comment->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAvgRatings()
+    {
+        $somme = 0;
+
+        foreach ($this->comments as $value) {
+            $somme = $somme + $value->getRating();
+        }
+
+        if (count($this->comments) > 0) {
+            return $somme / count($this->comments);
+        }
+
+        return 0;
+    }
+
+    public function getCommentFromUser(User $user)
+    {
+        foreach ($this->comments as $comment) {
+            if ($comment->getUser() === $user) {
+                return $comment;
+            }
+        }
+        return null;
+    }
+
+    public function isProductFromUser(User $user)
+    {
+        foreach ($user->getOrders() as $orders) {
+            foreach ($orders->getOrderDetails() as $order) {
+                if ($order->getProduct()->getId() == $this->id && $orders->getStatut()) {
+                    return $order->getProduct();
+                }
+            }
+        }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Entity\Order;
 use App\Entity\Carrier;
+use App\Entity\Comment;
 use App\Entity\Product;
 use App\Entity\Category;
 use App\Repository\OrderRepository;
@@ -24,7 +25,7 @@ class DashboardController extends AbstractDashboardController
     {
         $this->orderRepository = $orderRepository;
     }
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
         $routeBuilder = $this->container->get(AdminUrlGenerator::class);
@@ -47,5 +48,6 @@ class DashboardController extends AbstractDashboardController
         $nbrsOrderWait = count($this->orderRepository->findBy(['statut' => 0]));
         $nbrsOrderOk = count($this->orderRepository->findBy(['statut' => 1]));
         yield MenuItem::linkToCrud('Commandes <span style="color:green;font-weight:bold" class="badge badge-success">' . $nbrsOrderOk . '</span> <span style="color:red;font-weight:bold" class="badge badge-danger">' . $nbrsOrderWait . '</span>', 'fas fa-shopping-cart', Order::class);
+        yield MenuItem::linkToCrud('Commentaires', 'fas fa-comments', Comment::class);
     }
 }

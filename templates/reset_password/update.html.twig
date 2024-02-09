@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mot de passe oublié
+{% endblock %}
+{% block content %}
+	<h1>Changement de mot de passe</h1>
+	{{ form_start(form) }}
+	{{ form_row(form.newPassword,{'label':false,'attr':{'placeholder':"Votre mot de passe"}})}}
+	{{form_row(form.confirmNewPassword,{'label':false,'attr':{'placeholder':"Confirmation du mot de passe"}})}}
+	{{ form_end(form) }}
+{% endblock %}

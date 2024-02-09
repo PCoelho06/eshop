@@ -1,21 +1,56 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{product.name}}
+	{{product.name}}
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-5">
-            <img src="/uploads/{{product.illustration}}" alt="{{product.name}}" class="img-fluid">
-        </div>
-        <div class="col-md-7 my-auto">
-            <h3>{{product.name}}</h3>
-            <p>{{product.subtitle}}</p>
-            <b>{{(product.price /100) | number_format(2)}}€</b>
-            <hr>
-            <p>{{product.description | striptags('<br><strong>') | raw}}</p>
-            <a href="{{ path('app_cart_add',{'id':product.id}) }}" class="btn btn-primary">Ajouter au panier</a>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-md-5">
+			<img src="/uploads/{{product.illustration}}" alt="{{product.name}}" class="img-fluid">
+		</div>
+		<div class="col-md-7 my-auto">
+			<h3>{{product.name}}</h3>
+			<p>{{product.subtitle}}</p>
+			{% include 'partials/rating.html.twig' with {'rating': product.getAvgRatings} %}
+			<b>{{(product.price /100) | number_format(2)}}€</b>
+			<hr>
+			<p>{{product.description | striptags('<br><strong>') | raw}}</p>
+			<a href="{{ path('app_cart_add',{'id':product.id}) }}" class="btn btn-primary">Ajouter au panier</a>
+		</div>
+	</div>
+	{% if product.comments|length > 0 %}
+		<div class="alert alert-info mt-3">
+			<div class="row">
+				<div class="col-8">
+					Note sur
+					{{ product.comments | length }}
+					commentaires
+				</div>
+				<div class="col-3">
+					{% include 'partials/rating.html.twig' with {'rating': product.getAvgRatings} %}
+				</div>
+			</div>
+		</div>
+		<h4>Commentaires des utilisateurs</h4>
+		{% for comment in product.comments %}
+			<div class="row alert-light mb-3">
+				<div class="col">
+					<strong>{{ comment.user.firstName }}
+						{{ comment.user.lastName }}</strong><br>
+					<blockquote>{{ comment.content }}</blockquote>
+					<strong>Note:
+					</strong>
+					{{ comment.rating }}
+					{% include 'partials/rating.html.twig' with {'rating': comment.rating} %}
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<h4 class="mt-3">
+			<span class="badge bg-secondary">il n'y a pas de commentaires</span>
+		</h4>
+	{% endif %}
+
+
 {% endblock %}

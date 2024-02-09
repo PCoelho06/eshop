@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+	<h1 class="mt-3">Poster un commentaire sur le produit :
+		{{product.name}}</h1>
+	{% if product.isProductFromUser(app.user) %}
+		{% if product.getCommentFromUser(app.user) is null %}
+			<div class="alert alert-light">
+				<h2>Votre avis compte</h2>
+				{{ form_start(form) }}
+				{{ form_end(form) }}
+			</div>
+		{% else %}
+			<div class="alert alert-danger" role="alert">
+				<hr>
+				<h4 class="alert-heading">Vous avez déjà laissé un commentaire sur l'article
+					{{product.name}}</h4>
+				<hr>
+			</div>
+		{% endif %}
+	{% else %}
+		<div class="alert alert-danger" role="alert">
+			<hr>
+			<h4 class="alert-heading">Vous n'avez pas acheté l'article
+				{{product.name}}</h4>
+			<hr>
+		</div>
+	{% endif %}
+	<a href="{{path('app_account')}}">Retour à votre compte</a>
+
+{% endblock %}
